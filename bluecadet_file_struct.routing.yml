@@ -1,0 +1,9 @@
+bluecadet_file_struct.settings:
+  path: '/admin/config/system/bluecadet-utilities/bluecadet-file-struct'
+  defaults:
+    _form: '\Drupal\bluecadet_file_struct\Form\BlucadetFileStructSettings'
+    _title: ''
+  requirements:
+    _permission: 'administer site configuration'
+  options:
+    _admin_route: TRUE

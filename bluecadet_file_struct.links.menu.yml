@@ -1,0 +1,5 @@
+bluecadet_file_struct.settings:
+  title: 'Bluecadet File Struct Settings'
+  route_name: bluecadet_file_struct.settings
+  parent: bluecadet_utilities.settings
+  description: 'Bluecadet File Struct Settings'

@@ -1,0 +1,18 @@
+name: Bluecadet File Structure
+type: module
+description: 'Creates functionality to change where your managed files are stored on your site.'
+core_version_requirement: ^9 || ^10
+
+package: Bluecadet
+
+dependencies:
+  - drupal:media
+  - drupal:taxonomy
+  - bluecadet:bluecadet_utilities
+
+configure: bluecadet_file_struct.settings
+
+
+# Information added by packaging script on 2023-04-01
+version: 1.0.0-alpha1
+project: bluecadet_file_struct

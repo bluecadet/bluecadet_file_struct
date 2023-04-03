@@ -1,0 +1,64 @@
+<?php
+
+/**
+ * @file
+ * Main file and functions for bluecadet_file_struct.
+ */
+
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\File\FileSystemInterface;
+use Drupal\Core\Messenger\Messenger;
+
+/**
+ * Implements hook_ENTITY_presave().
+ */
+function bluecadet_file_struct_media_presave(EntityInterface $media) {
+
+  $config = \Drupal::config('bluecadet_file_struct.settings');
+  $dir_field = $config->get('media_field');
+
+  if ($media->hasField($dir_field)) {
+    $source_field = $media->getSource()->getSourceFieldDefinition($media->bundle->entity)->getName();
+
+    // Check directory.
+    $file = $media->{$source_field}->entity;
+    $dir = $media->{$dir_field}->value;
+
+    if ($file && $dir) {
+      $new_dir = $dir;
+
+      $path_info = pathinfo($file->getFileUri());
+      // ksm($path_info);
+
+      if (($new_dir . '/' . $path_info['basename']) !== $file->getFileUri()) {
+        if (\Drupal::service('file_system')->prepareDirectory($new_dir, FileSystemInterface::CREATE_DIRECTORY)) {
+          if (file_move($file, $new_dir)) {
+            \Drupal::messenger()->addMessage('File Moved to ' . $new_dir . '.', Messenger::TYPE_STATUS);
+          }
+          // todo: add in error messages
+        }
+        // todo: add in error messages
+      }
+      // todo: add in error messages
+    }
+    elseif ($file && !$dir) {
+      // \Drupal::messenger()->addMessage('File Not Moved.', Messenger::TYPE_STATUS);
+    }
+  }
+}
+
+/**
+ * Implements hook_entity_bundle_field_info_alter().
+ */
+function bluecadet_file_struct_entity_bundle_field_info_alter(&$fields, EntityTypeInterface $entity_type, $bundle) {
+  if ($entity_type->id() === 'media') {
+
+    $config = \Drupal::config('bluecadet_file_struct.settings');
+
+    if (isset($fields[$config->get('media_field')])) {
+      // Use the ID as defined in the annotation of the constraint definition
+      $fields[$config->get('media_field')]->addConstraint('ValidDir', []);
+    }
+  }
+}
