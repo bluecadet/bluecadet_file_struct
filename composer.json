@@ -1,0 +1,21 @@
+{
+  "name": "bluecadet/bluecadet_file_struct",
+  "description": "Creates functionality to change where your managed files are stored on your site.",
+  "type": "custom-drupal-module",
+  "authors": [
+    {
+      "name": "Pete Inge",
+      "email": "pete.inge@gmail.com",
+      "role": "Maintainer"
+    }
+  ],
+  "license": "GPL-2.0+",
+  "minimum-stability": "dev",
+  "require": {
+    "php": "^8.0",
+    "bluecadet/bluecadet/utilities": "^4.0",
+    "composer/installers": "^2.0",
+    "oomphinc/composer-installers-extender": "^2.0",
+    "melbahja/semver": "^1.0.0"
+  }
+}
