@@ -13,6 +13,7 @@ dependencies:
 configure: bluecadet_file_struct.settings
 
 
-# Information added by packaging script on 2023-04-01
-version: 1.0.0-alpha1
+# Information added by packaging script on 2023-04-20
+version: 1.0.0-rc1
 project: bluecadet_file_struct
+datestamp: 1682018090397
