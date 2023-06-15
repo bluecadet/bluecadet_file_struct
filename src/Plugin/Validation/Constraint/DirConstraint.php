@@ -20,6 +20,6 @@ class DirConstraint extends Constraint {
 
   public $notEndWithSlash = '%field: "%value" - Should not end in a slash';
 
-  public $usesImproperChars = '%field: "%value" - uses improper chars for a directory name, please use alphanumerc and - or _';
+  public $usesImproperChars = '%field: "%value" - uses improper chars for a directory name, please use alphanumeric and - or _';
 
 }
