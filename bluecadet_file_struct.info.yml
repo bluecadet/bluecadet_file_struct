@@ -1,7 +1,7 @@
 name: Bluecadet File Structure
 type: module
 description: 'Creates functionality to change where your managed files are stored on your site.'
-core_version_requirement: ^9 || ^10
+core_version_requirement: ^10.5 || ^11.2
 
 package: Bluecadet
 
