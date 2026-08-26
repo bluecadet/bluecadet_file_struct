@@ -2,7 +2,6 @@
 
 namespace Drupal\bluecadet_file_struct\Plugin\Validation\Constraint;
 
-use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
 /**
@@ -13,7 +12,7 @@ class DirConstraintValidator extends ConstraintValidator {
   /**
    * {@inheritdoc}
    */
-  public function validate($value, Constraint $constraint) {
+  public function validate($value, DirConstraint $constraint) {
 
     $field_label = $value->getFieldDefinition()->getLabel();
     foreach ($value as $item) {
