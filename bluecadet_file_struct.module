@@ -5,15 +5,15 @@
  * Main file and functions for bluecadet_file_struct.
  */
 
-use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Messenger\Messenger;
+use Drupal\media\MediaInterface;
 
 /**
  * Implements hook_ENTITY_presave().
  */
-function bluecadet_file_struct_media_presave(EntityInterface $media) {
+function bluecadet_file_struct_media_presave(MediaInterface $media) {
 
   $config = \Drupal::config('bluecadet_file_struct.settings');
   $dir_field = $config->get('media_field');
@@ -33,10 +33,13 @@ function bluecadet_file_struct_media_presave(EntityInterface $media) {
 
       if (($new_dir . '/' . $path_info['basename']) !== $file->getFileUri()) {
         if (\Drupal::service('file_system')->prepareDirectory($new_dir, FileSystemInterface::CREATE_DIRECTORY)) {
-          if (file_move($file, $new_dir)) {
+          try {
+            \Drupal::service('file.repository')->move($file, $new_dir);
             \Drupal::messenger()->addMessage('File Moved to ' . $new_dir . '.', Messenger::TYPE_STATUS);
           }
-          // todo: add in error messages
+          catch (\Exception $e) {
+            // todo: add in error messages
+          }
         }
         // todo: add in error messages
       }
