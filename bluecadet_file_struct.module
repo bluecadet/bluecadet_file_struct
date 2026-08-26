@@ -29,15 +29,21 @@ function bluecadet_file_struct_media_presave(MediaInterface $media) {
       $new_dir = $dir;
 
       $path_info = pathinfo($file->getFileUri());
+      $new_uri = $new_dir . '/' . $path_info['basename'];
       // ksm($path_info);
 
-      if (($new_dir . '/' . $path_info['basename']) !== $file->getFileUri()) {
+      if ($new_uri !== $file->getFileUri()) {
         if (\Drupal::service('file_system')->prepareDirectory($new_dir, FileSystemInterface::CREATE_DIRECTORY)) {
           try {
-            \Drupal::service('file.repository')->move($file, $new_dir);
+            \Drupal::service('file.repository')->move($file, $new_uri);
             \Drupal::messenger()->addMessage('File Moved to ' . $new_dir . '.', Messenger::TYPE_STATUS);
           }
           catch (\Exception $e) {
+            \Drupal::logger('bluecadet_file_struct')->error('Failed to move file %uri to %new_uri: %message', [
+              '%uri' => $file->getFileUri(),
+              '%new_uri' => $new_uri,
+              '%message' => $e->getMessage(),
+            ]);
             // todo: add in error messages
           }
         }
