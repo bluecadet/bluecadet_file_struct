@@ -19,6 +19,13 @@ function bluecadet_file_struct_media_presave(MediaInterface $media) {
   $dir_field = $config->get('media_field');
 
   if ($media->hasField($dir_field)) {
+    // phpstan-drupal's magic-property reflection can't resolve the bundle
+    // base field's entity-reference target (the MediaType config entity)
+    // when the parameter is typed against MediaInterface rather than the
+    // concrete Media class; this is a known analysis limitation, not a
+    // runtime issue -- ->bundle->entity is the standard way to reach a
+    // bundleable entity's bundle config entity.
+    // @phpstan-ignore-next-line
     $source_field = $media->getSource()->getSourceFieldDefinition($media->bundle->entity)->getName();
 
     // Check directory.
