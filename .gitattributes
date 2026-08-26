@@ -6,9 +6,7 @@
 .eslintrc               export-ignore
 .nvmrc                  export-ignore
 assets/src/*            export-ignore
-bin                     export-ignore
-bin/*                   export-ignore
-bldrConfig.js           export-ignore
+bldr.config.js          export-ignore
 DEV_README.md           export-ignore
 node_modules/*          export-ignore
 package-lock.json       export-ignore
