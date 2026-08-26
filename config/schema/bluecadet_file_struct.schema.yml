@@ -3,20 +3,11 @@ bluecadet_file_struct.settings:
   label: 'File struct Config settings'
   mapping:
     media_field:
-      type: mapping
+      type: string
       label: 'Media Field to act on'
-      mapping:
-        type: string
-        label: 'Field'
     public_vocab:
-      type: mapping
-      label: 'Vacabulary which represents the directory structure for public files.'
-      mapping:
-        type: string
-        label: 'Vocabulary ID'
+      type: string
+      label: 'Vocabulary which represents the directory structure for public files.'
     private_vocab:
-      type: mapping
-      label: 'Vacabulary which represents the directory structure for private files.'
-      mapping:
-        type: string
-        label: 'Vocabulary ID'
+      type: string
+      label: 'Vocabulary which represents the directory structure for private files.'
