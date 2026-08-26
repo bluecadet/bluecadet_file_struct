@@ -60,7 +60,7 @@ class BlucadetFileStructSettings extends ConfigFormBase {
 
     $form['#tree'] = TRUE;
 
-    $options = ['' => "- choose -"];
+    $options = ['' => $this->t('- choose -')];
 
     // Set up fields.
     $field_map = $this->entityFieldManager->getFieldMap();
