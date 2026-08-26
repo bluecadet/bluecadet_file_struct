@@ -27,7 +27,14 @@ class DirConstraintValidatorTest extends UnitTestCase {
 
     $item = (object) ['value' => $value];
 
-    $field_list = $this->createMock(FieldItemListInterface::class);
+    // FieldItemListInterface only requires \Traversable (a method-less
+    // marker interface); getIterator() itself comes from \IteratorAggregate,
+    // which concrete implementations add separately. addMethods() is needed
+    // to stub a method that isn't part of the mocked interface's own
+    // declared signature.
+    $field_list = $this->getMockBuilder(FieldItemListInterface::class)
+      ->addMethods(['getIterator'])
+      ->getMock();
     $field_list->method('getFieldDefinition')->willReturn($field_definition);
     $field_list->method('getIterator')->willReturn(new \ArrayIterator([$item]));
 
