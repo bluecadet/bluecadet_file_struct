@@ -2,7 +2,9 @@
 
 namespace Drupal\bluecadet_file_struct\Plugin\Validation\Constraint;
 
+use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
+use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
 /**
  * Validates the ValidDir constraint.
@@ -12,7 +14,10 @@ class DirConstraintValidator extends ConstraintValidator {
   /**
    * {@inheritdoc}
    */
-  public function validate($value, DirConstraint $constraint) {
+  public function validate($value, Constraint $constraint) {
+    if (!$constraint instanceof DirConstraint) {
+      throw new UnexpectedTypeException($constraint, DirConstraint::class);
+    }
 
     $field_label = $value->getFieldDefinition()->getLabel();
     foreach ($value as $item) {
