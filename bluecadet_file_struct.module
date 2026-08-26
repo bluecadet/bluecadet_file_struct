@@ -44,7 +44,7 @@ function bluecadet_file_struct_media_presave(MediaInterface $media) {
         if (\Drupal::service('file_system')->prepareDirectory($new_dir, FileSystemInterface::CREATE_DIRECTORY)) {
           try {
             \Drupal::service('file.repository')->move($file, $new_uri);
-            \Drupal::messenger()->addMessage('File Moved to ' . $new_dir . '.', Messenger::TYPE_STATUS);
+            \Drupal::messenger()->addMessage(t('File moved to %dir.', ['%dir' => $new_dir]), Messenger::TYPE_STATUS);
           }
           catch (\Exception $e) {
             \Drupal::logger('bluecadet_file_struct')->error('Failed to move file %uri to %new_uri: %message', [
@@ -52,7 +52,7 @@ function bluecadet_file_struct_media_presave(MediaInterface $media) {
               '%new_uri' => $new_uri,
               '%message' => $e->getMessage(),
             ]);
-            \Drupal::messenger()->addMessage('Failed to move file to ' . $new_dir . '. See the logs for details.', Messenger::TYPE_ERROR);
+            \Drupal::messenger()->addMessage(t('Failed to move file to %dir. See the logs for details.', ['%dir' => $new_dir]), Messenger::TYPE_ERROR);
           }
         }
         else {
@@ -60,7 +60,7 @@ function bluecadet_file_struct_media_presave(MediaInterface $media) {
             '%dir' => $new_dir,
             '%uri' => $file->getFileUri(),
           ]);
-          \Drupal::messenger()->addMessage('Could not create or access the directory ' . $new_dir . '.', Messenger::TYPE_ERROR);
+          \Drupal::messenger()->addMessage(t('Could not create or access the directory %dir.', ['%dir' => $new_dir]), Messenger::TYPE_ERROR);
         }
       }
     }
