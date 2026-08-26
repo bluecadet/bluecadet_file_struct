@@ -78,7 +78,7 @@ class BlucadetFileStructSettings extends ConfigFormBase {
     $form['media_field'] = [
       '#type' => 'select',
       '#title' => 'Media Field',
-      '#description' => $this->t('The Media field that is a Taxonomy Term Reference to the directory structure.'),
+      '#description' => $this->t('The string field on Media entities that holds the target storage directory (e.g. "public://exhibitions/2026").'),
       '#options' => $options,
       '#default_value' => $config->get('media_field'),
     ];
