@@ -12,9 +12,10 @@
   "license": "GPL-2.0+",
   "minimum-stability": "dev",
   "require": {
-    "php": "^8.0",
+    "php": "^8.2",
     "bluecadet/bluecadet_utilities": "^4.0",
     "composer/installers": "^1.9||^2.0",
+    "drupal/core": "^10.5 || ^11.2",
     "oomphinc/composer-installers-extender": "^2.0",
     "melbahja/semver": "^1.0.0"
   }

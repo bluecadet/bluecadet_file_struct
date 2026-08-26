@@ -2,22 +2,17 @@
 
 namespace Drupal\bluecadet_file_struct\Form;
 
-use Drupal\bluecadet_utilities\DrupalStateTrait;
+use Drupal\Core\Entity\EntityFieldManagerInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Form\FormBase;
-use Drupal\Core\Link;
 use Drupal\Core\Messenger\MessengerTrait;
-use Drupal\Core\Render\Markup;
-use Drupal\Core\Url;
-use Drupal\taxonomy\Entity\Vocabulary;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Bluecadet Utility Settings Form.
  */
 class BlucadetFileStructSettings extends ConfigFormBase {
 
-  // use DrupalStateTrait;
   use MessengerTrait;
 
   /**
@@ -45,36 +40,30 @@ class BlucadetFileStructSettings extends ConfigFormBase {
 
   /**
    * Drupal Entity Field Manager.
-   *
-   * @var \Drupal\Core\Entity\EntityFieldManager
    */
-  private $entityFieldManager;
+  protected EntityFieldManagerInterface $entityFieldManager;
 
   /**
-   * Get Entity Field Manager.
+   * {@inheritdoc}
    */
-  private function entityFieldManager() {
-    if (!$this->entityFieldManager) {
-      $this->entityFieldManager = \Drupal::service('entity_field.manager'); // phpcs:ignore
-    }
-    return $this->entityFieldManager;
+  public static function create(ContainerInterface $container) {
+    $instance = parent::create($container);
+    $instance->entityFieldManager = $container->get('entity_field.manager');
+    return $instance;
   }
 
   /**
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-
-    // ksm($this->entityFieldManager()->getFieldMap());
-
     $config = $this->config(static::SETTINGS);
 
     $form['#tree'] = TRUE;
 
-    $options = ['' => "- choose -"];
+    $options = ['' => $this->t('- choose -')];
 
     // Set up fields.
-    $field_map = $this->entityFieldManager()->getFieldMap();
+    $field_map = $this->entityFieldManager->getFieldMap();
     foreach ($field_map['media'] as $field => $field_data) {
       if ($field_data['type'] == "string") {
         $options[$field] = $field . " (" . implode(",", $field_data['bundles']) . ")";
@@ -84,7 +73,7 @@ class BlucadetFileStructSettings extends ConfigFormBase {
     $form['media_field'] = [
       '#type' => 'select',
       '#title' => 'Media Field',
-      '#description' => $this->t('The Media field that is a Taxonomy Term Reference to the directory structure.'),
+      '#description' => $this->t('The string field on Media entities that holds the target storage directory (e.g. "public://exhibitions/2026").'),
       '#options' => $options,
       '#default_value' => $config->get('media_field'),
     ];

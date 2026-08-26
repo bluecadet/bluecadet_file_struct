@@ -5,20 +5,27 @@
  * Main file and functions for bluecadet_file_struct.
  */
 
-use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Messenger\Messenger;
+use Drupal\media\MediaInterface;
 
 /**
  * Implements hook_ENTITY_presave().
  */
-function bluecadet_file_struct_media_presave(EntityInterface $media) {
+function bluecadet_file_struct_media_presave(MediaInterface $media) {
 
   $config = \Drupal::config('bluecadet_file_struct.settings');
   $dir_field = $config->get('media_field');
 
   if ($media->hasField($dir_field)) {
+    // phpstan-drupal's magic-property reflection can't resolve the bundle
+    // base field's entity-reference target (the MediaType config entity)
+    // when the parameter is typed against MediaInterface rather than the
+    // concrete Media class; this is a known analysis limitation, not a
+    // runtime issue -- ->bundle->entity is the standard way to reach a
+    // bundleable entity's bundle config entity.
+    // @phpstan-ignore-next-line
     $source_field = $media->getSource()->getSourceFieldDefinition($media->bundle->entity)->getName();
 
     // Check directory.
@@ -29,21 +36,38 @@ function bluecadet_file_struct_media_presave(EntityInterface $media) {
       $new_dir = $dir;
 
       $path_info = pathinfo($file->getFileUri());
-      // ksm($path_info);
+      $new_uri = $new_dir . '/' . $path_info['basename'];
 
-      if (($new_dir . '/' . $path_info['basename']) !== $file->getFileUri()) {
+      // If the file is already at the target location, there's nothing to
+      // do -- this isn't a failure, just a no-op.
+      if ($new_uri !== $file->getFileUri()) {
         if (\Drupal::service('file_system')->prepareDirectory($new_dir, FileSystemInterface::CREATE_DIRECTORY)) {
-          if (file_move($file, $new_dir)) {
-            \Drupal::messenger()->addMessage('File Moved to ' . $new_dir . '.', Messenger::TYPE_STATUS);
+          try {
+            \Drupal::service('file.repository')->move($file, $new_uri);
+            \Drupal::messenger()->addMessage(t('File moved to %dir.', ['%dir' => $new_dir]), Messenger::TYPE_STATUS);
           }
-          // todo: add in error messages
+          catch (\Exception $e) {
+            \Drupal::logger('bluecadet_file_struct')->error('Failed to move file %uri to %new_uri: %message', [
+              '%uri' => $file->getFileUri(),
+              '%new_uri' => $new_uri,
+              '%message' => $e->getMessage(),
+            ]);
+            \Drupal::messenger()->addMessage(t('Failed to move file to %dir. See the logs for details.', ['%dir' => $new_dir]), Messenger::TYPE_ERROR);
+          }
         }
-        // todo: add in error messages
+        else {
+          \Drupal::logger('bluecadet_file_struct')->error('Could not prepare directory %dir for file %uri.', [
+            '%dir' => $new_dir,
+            '%uri' => $file->getFileUri(),
+          ]);
+          \Drupal::messenger()->addMessage(t('Could not create or access the directory %dir.', ['%dir' => $new_dir]), Messenger::TYPE_ERROR);
+        }
       }
-      // todo: add in error messages
     }
     elseif ($file && !$dir) {
-      // \Drupal::messenger()->addMessage('File Not Moved.', Messenger::TYPE_STATUS);
+      // No directory is configured on this field for this media item -- a
+      // common, expected state (most media won't use this feature), not an
+      // error, so intentionally silent rather than messaging on every save.
     }
   }
 }
@@ -57,7 +81,7 @@ function bluecadet_file_struct_entity_bundle_field_info_alter(&$fields, EntityTy
     $config = \Drupal::config('bluecadet_file_struct.settings');
 
     if (isset($fields[$config->get('media_field')])) {
-      // Use the ID as defined in the annotation of the constraint definition
+      // Use the ID as defined in the annotation of the constraint definition.
       $fields[$config->get('media_field')]->addConstraint('ValidDir', []);
     }
   }
