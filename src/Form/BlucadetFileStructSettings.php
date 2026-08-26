@@ -2,22 +2,17 @@
 
 namespace Drupal\bluecadet_file_struct\Form;
 
-use Drupal\bluecadet_utilities\DrupalStateTrait;
+use Drupal\Core\Entity\EntityFieldManagerInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Form\FormBase;
-use Drupal\Core\Link;
 use Drupal\Core\Messenger\MessengerTrait;
-use Drupal\Core\Render\Markup;
-use Drupal\Core\Url;
-use Drupal\taxonomy\Entity\Vocabulary;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Bluecadet Utility Settings Form.
  */
 class BlucadetFileStructSettings extends ConfigFormBase {
 
-  // use DrupalStateTrait;
   use MessengerTrait;
 
   /**
@@ -46,18 +41,17 @@ class BlucadetFileStructSettings extends ConfigFormBase {
   /**
    * Drupal Entity Field Manager.
    *
-   * @var \Drupal\Core\Entity\EntityFieldManager
+   * @var \Drupal\Core\Entity\EntityFieldManagerInterface
    */
-  private $entityFieldManager;
+  protected $entityFieldManager;
 
   /**
-   * Get Entity Field Manager.
+   * {@inheritdoc}
    */
-  private function entityFieldManager() {
-    if (!$this->entityFieldManager) {
-      $this->entityFieldManager = \Drupal::service('entity_field.manager'); // phpcs:ignore
-    }
-    return $this->entityFieldManager;
+  public static function create(ContainerInterface $container) {
+    $instance = parent::create($container);
+    $instance->entityFieldManager = $container->get('entity_field.manager');
+    return $instance;
   }
 
   /**
@@ -74,7 +68,7 @@ class BlucadetFileStructSettings extends ConfigFormBase {
     $options = ['' => "- choose -"];
 
     // Set up fields.
-    $field_map = $this->entityFieldManager()->getFieldMap();
+    $field_map = $this->entityFieldManager->getFieldMap();
     foreach ($field_map['media'] as $field => $field_data) {
       if ($field_data['type'] == "string") {
         $options[$field] = $field . " (" . implode(",", $field_data['bundles']) . ")";
