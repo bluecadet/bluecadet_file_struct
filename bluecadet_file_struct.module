@@ -38,6 +38,8 @@ function bluecadet_file_struct_media_presave(MediaInterface $media) {
       $path_info = pathinfo($file->getFileUri());
       $new_uri = $new_dir . '/' . $path_info['basename'];
 
+      // If the file is already at the target location, there's nothing to
+      // do -- this isn't a failure, just a no-op.
       if ($new_uri !== $file->getFileUri()) {
         if (\Drupal::service('file_system')->prepareDirectory($new_dir, FileSystemInterface::CREATE_DIRECTORY)) {
           try {
@@ -50,16 +52,22 @@ function bluecadet_file_struct_media_presave(MediaInterface $media) {
               '%new_uri' => $new_uri,
               '%message' => $e->getMessage(),
             ]);
-            // @todo Add error messages.
+            \Drupal::messenger()->addMessage('Failed to move file to ' . $new_dir . '. See the logs for details.', Messenger::TYPE_ERROR);
           }
         }
-        // @todo Add error messages.
+        else {
+          \Drupal::logger('bluecadet_file_struct')->error('Could not prepare directory %dir for file %uri.', [
+            '%dir' => $new_dir,
+            '%uri' => $file->getFileUri(),
+          ]);
+          \Drupal::messenger()->addMessage('Could not create or access the directory ' . $new_dir . '.', Messenger::TYPE_ERROR);
+        }
       }
-      // @todo Add error messages.
     }
     elseif ($file && !$dir) {
-      // @todo Message or log that the file wasn't moved because no
-      // directory is set.
+      // No directory is configured on this field for this media item -- a
+      // common, expected state (most media won't use this feature), not an
+      // error, so intentionally silent rather than messaging on every save.
     }
   }
 }
