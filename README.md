@@ -80,3 +80,13 @@ Only `tests/src/Unit/DirConstraintValidatorTest.php` exists today, covering the 
 ### 1.0.x
 
 - Initial release: configure a Media field as a target directory, move files there on save, validate directory format
+
+<br>
+<br>
+<br>
+
+## Proudly developed @ Bluecadet
+
+<p style="background-color: white; padding: 20px">
+  <a href="https://www.bluecadet.com/"><img style="max-width: 50%; min-width: 300px; background: white; padding: 20px;" src="https://www.bluecadet.com/wp-content/themes/bluecadet-2018/images/logo/logo-bluecadet-black.svg" alt="Bluecadet"></a>
+</p>
