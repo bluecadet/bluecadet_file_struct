@@ -1,77 +1,82 @@
-CONTENTS OF THIS FILE
----------------------
+# Bluecadet File Structure
 
- * Introduction
- * Installation
- * Configuration
- * FAQ
- * Maintainers
- * Changelog
+A Drupal module that lets you designate a text field on Media entities as a target storage directory, then automatically moves each entity's underlying file there on save.
 
+## Requirements
 
-INTRODUCTION
-------------
+- Drupal 10.5+ or Drupal 11.2+
+- PHP 8.2 or higher
 
-This module lets you designate a text field on Media entities to hold a
-target storage directory. Whenever a Media entity with that field set is
-saved, the module moves its underlying file to that directory -- so file
-storage location can be driven by editorial/content data (e.g. organizing
-uploads by exhibition, department, or year) instead of Drupal's default
-flat/date-based file paths.
+## Versions
 
-Current functionality:
+### 1.x Branch
 
- * Pick which string field on Media entities acts as the "directory" field
-   (settings form; only string-type fields are offered as options).
- * On save, if that field has a value and it differs from the file's current
-   location, move the file there, creating the directory if needed.
- * Validate that field's value is a well-formed directory URI: starts with
-   `public://` or `private://`, does not end in a slash, and uses only
-   alphanumeric characters, `-`, and `_`.
+- **1.1.x**: Drupal 10.5+/11.2+ support (PHP 8.2+)
+- **1.0.x**: Drupal 9/10 support (original release)
 
-Not yet implemented: the module depends on Drupal core's Taxonomy module and
-its config schema declares `public_vocab`/`private_vocab` settings, which
-suggests an original intent to derive the directory structure from a
-taxonomy vocabulary (e.g. term hierarchy -> folder path). No code currently
-reads either config key -- only the flat string-field workflow above is
-wired up.
+## Includes
 
+- Settings form to pick which string field on Media entities acts as the "directory" field (only string-type fields on `media` bundles are offered as options)
+- On save, if that field has a value and it differs from the file's current location, moves the file there, creating the directory if needed
+- `ValidDir` constraint that validates the field's value is a well-formed directory URI: starts with `public://` or `private://`, does not end in a slash, and uses only alphanumeric characters, `-`, and `_`
 
-INSTALLATION
-------------
+**Not yet implemented:** `config/schema/bluecadet_file_struct.schema.yml` also declares `public_vocab`/`private_vocab` settings, and the module depends on Drupal core's Taxonomy module -- both suggest an original design where the directory structure would be derived from a taxonomy vocabulary (e.g. term hierarchy -> folder path). No code currently reads either config key; only the flat string-field workflow above is wired up.
 
- * Install as you would normally install a contributed Drupal module. Visit
-   https://www.drupal.org/node/1897420 for further information.
+## Not using Composer
 
+If you are not using composer, you can delete all unneeded files.
 
-CONFIGURATION
--------------
+- composer.json
 
-Configuration can be found at:
+## Using Composer
 
-Admin > Configuration > System > Bluecadet Utilities > Bluecadet File
-Struct (`/admin/config/system/bluecadet-utilities/bluecadet-file-struct`).
+If you are using composer to manage Drupal modules, make sure you add custom
+location for this module to be downloaded to. You must add the installer types
+line as well as the location for the module.
 
-Select the string field on Media entities that should hold each item's
-target directory. Editors then enter a value like `public://exhibitions/2026`
-on that field; the module handles moving the file on save.
+```json
+  ...
+  "installer-types": ["custom-drupal-module"],
+  "installer-paths": {
+    "web/core": ["type:drupal-core"],
+    "web/modules/contrib/{$name}": ["type:drupal-module"],
+    "web/modules/custom/{$name}": ["type:custom-drupal-module"],
+    "web/profiles/contrib/{$name}": ["type:drupal-profile"],
+    "web/themes/contrib/{$name}": ["type:drupal-theme"],
+    "drush/contrib/{$name}": ["type:drupal-drush"]
+  },
+  ...
+```
 
+## Testing
 
-MAINTAINERS
------------
+This module includes automated tests that run via GitHub Actions against Drupal 10.5.x-11.3.x (see `.github/workflows/drupal-tests-and-standards.yml` for the exact PHP/MariaDB matrix).
 
-Current maintainers:
+### Test Plan
 
- * Pete Inge (pingevt) - https://www.drupal.org/user/411339
+#### Automated Tests (GitHub Actions)
 
-This project has been sponsored by:
+The CI pipeline runs the following for each Drupal version:
 
- * Bluecadet - https://www.bluecadet.com/
+1. **PHPCS** - Drupal coding standards validation
+2. **DrupalPractice** - Best practices validation
+3. **PHPStan** - Drupal-aware static analysis (deprecation/API checks, level 2)
+4. **PHPUnit** - automated tests
 
+#### Current coverage
 
-CHANGELOG
----------
+Only `tests/src/Unit/DirConstraintValidatorTest.php` exists today, covering the `ValidDir` constraint's validation logic. Kernel coverage for the media-presave file-move behavior and Functional coverage for the settings form are not yet written.
 
-# Unreleased
+## Changelog
 
- -
+### 1.1.x
+
+- Added Drupal 11 compatibility (`drupal/core: ^10.5 || ^11.2`, PHP 8.2+)
+- Adopted the reusable GitHub Actions workflow architecture (PHPStan, dynamic module name, least-privilege permissions)
+- Upgraded build tooling to bldr 2.0.0-alpha and Node 20
+- Fixed D11-incompatible entity typing and the removed `file_move()` function
+- Added initial Unit test coverage
+
+### 1.0.x
+
+- Initial release: configure a Media field as a target directory, move files there on save, validate directory format
