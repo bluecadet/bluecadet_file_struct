@@ -40,10 +40,8 @@ class BlucadetFileStructSettings extends ConfigFormBase {
 
   /**
    * Drupal Entity Field Manager.
-   *
-   * @var \Drupal\Core\Entity\EntityFieldManagerInterface
    */
-  protected $entityFieldManager;
+  protected EntityFieldManagerInterface $entityFieldManager;
 
   /**
    * {@inheritdoc}
@@ -58,9 +56,6 @@ class BlucadetFileStructSettings extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-
-    // ksm($this->entityFieldManager()->getFieldMap());
-
     $config = $this->config(static::SETTINGS);
 
     $form['#tree'] = TRUE;

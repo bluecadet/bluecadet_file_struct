@@ -37,7 +37,6 @@ function bluecadet_file_struct_media_presave(MediaInterface $media) {
 
       $path_info = pathinfo($file->getFileUri());
       $new_uri = $new_dir . '/' . $path_info['basename'];
-      // ksm($path_info);
 
       if ($new_uri !== $file->getFileUri()) {
         if (\Drupal::service('file_system')->prepareDirectory($new_dir, FileSystemInterface::CREATE_DIRECTORY)) {
@@ -51,15 +50,16 @@ function bluecadet_file_struct_media_presave(MediaInterface $media) {
               '%new_uri' => $new_uri,
               '%message' => $e->getMessage(),
             ]);
-            // todo: add in error messages
+            // @todo Add error messages.
           }
         }
-        // todo: add in error messages
+        // @todo Add error messages.
       }
-      // todo: add in error messages
+      // @todo Add error messages.
     }
     elseif ($file && !$dir) {
-      // \Drupal::messenger()->addMessage('File Not Moved.', Messenger::TYPE_STATUS);
+      // @todo Message or log that the file wasn't moved because no
+      // directory is set.
     }
   }
 }
@@ -73,7 +73,7 @@ function bluecadet_file_struct_entity_bundle_field_info_alter(&$fields, EntityTy
     $config = \Drupal::config('bluecadet_file_struct.settings');
 
     if (isset($fields[$config->get('media_field')])) {
-      // Use the ID as defined in the annotation of the constraint definition
+      // Use the ID as defined in the annotation of the constraint definition.
       $fields[$config->get('media_field')]->addConstraint('ValidDir', []);
     }
   }
