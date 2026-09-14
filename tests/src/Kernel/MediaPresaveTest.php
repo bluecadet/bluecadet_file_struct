@@ -77,8 +77,12 @@ class MediaPresaveTest extends KernelTestBase {
    * Creates a real file on disk and its File entity.
    */
   protected function createFile(string $uri, string $contents = 'test'): File {
+    // Drupal 10.x's FileSystemInterface::prepareDirectory() declares
+    // $directory by reference (11.x does not); pass a variable rather than
+    // dirname($uri) directly so this works on both.
+    $directory = dirname($uri);
     \Drupal::service('file_system')->prepareDirectory(
-      dirname($uri),
+      $directory,
       FileSystemInterface::CREATE_DIRECTORY
     );
     file_put_contents($uri, $contents);
