@@ -142,15 +142,25 @@ class MediaPresaveTest extends KernelTestBase {
   }
 
   /**
-   * Tests that an unwritable/invalid target scheme leaves the file in place.
+   * Tests that a target directory blocked by an existing file is left alone.
+   *
+   * prepareDirectory() fails when a plain file already occupies the target
+   * path (mkdir() can't create a directory where a file already exists),
+   * which triggers the same "could not prepare directory" branch as a
+   * genuinely unwritable directory without depending on filesystem
+   * permissions or an unregistered stream wrapper (the latter raises a raw
+   * PHP warning from is_dir() itself, which Drupal 10.x's stricter error
+   * handling turns into a fatal test error rather than a graceful FALSE).
    */
   public function testFileUnchangedWhenTargetDirectoryCannotBePrepared(): void {
     $this->config('bluecadet_file_struct.settings')
       ->set('media_field', 'field_directory')
       ->save();
 
+    file_put_contents('public://blocked-path', 'this is a file, not a directory');
+
     $file = $this->createFile('public://original.txt');
-    $media = $this->createMedia($file, 'invalid-scheme://nowhere');
+    $media = $this->createMedia($file, 'public://blocked-path');
 
     $unchanged_file = File::load($media->get('field_media_file')->target_id);
     $this->assertSame('public://original.txt', $unchanged_file->getFileUri());
