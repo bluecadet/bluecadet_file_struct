@@ -76,6 +76,10 @@ Only `tests/src/Unit/DirConstraintValidatorTest.php` exists today, covering the 
 - Upgraded build tooling to bldr 2.0.0-alpha and Node 20
 - Fixed D11-incompatible entity typing and the removed `file_move()` function
 - Added initial Unit test coverage
+- Moved CI to a shared, config-driven orchestrator in `bluecadet/web-gh-actions`
+- Fixed several postcss plugins that were silently relying on an old transitive dependency rather than being declared directly; updated `@bluecadet/drops` to `^1.2.1`
+- Added Kernel test coverage for the media-presave, field-alter, and settings-form logic (27% to ~90%)
+- Bumped `bluecadet/bluecadet_utilities` to `^5.0`, removed the unused `melbahja/semver` dependency, and added `bluecadet/bc_drupal_package_manager` support (`hook_update_status_alter()`) so the module surfaces its own update recommendations
 
 ### 1.0.x
 
