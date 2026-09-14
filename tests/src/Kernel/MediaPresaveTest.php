@@ -2,6 +2,7 @@
 
 namespace Drupal\Tests\bluecadet_file_struct\Kernel;
 
+use Drupal\Core\File\FileSystemInterface;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\file\Entity\File;
@@ -78,7 +79,7 @@ class MediaPresaveTest extends KernelTestBase {
   protected function createFile(string $uri, string $contents = 'test'): File {
     \Drupal::service('file_system')->prepareDirectory(
       dirname($uri),
-      \Drupal\Core\File\FileSystemInterface::CREATE_DIRECTORY
+      FileSystemInterface::CREATE_DIRECTORY
     );
     file_put_contents($uri, $contents);
 
