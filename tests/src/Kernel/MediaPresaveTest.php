@@ -144,8 +144,8 @@ class MediaPresaveTest extends KernelTestBase {
   /**
    * Tests that a target directory blocked by an existing file is left alone.
    *
-   * prepareDirectory() fails when a plain file already occupies the target
-   * path (mkdir() can't create a directory where a file already exists),
+   * FileSystem::prepareDirectory() fails when a plain file already occupies
+   * the target path (mkdir() can't create a directory where a file exists),
    * which triggers the same "could not prepare directory" branch as a
    * genuinely unwritable directory without depending on filesystem
    * permissions or an unregistered stream wrapper (the latter raises a raw
