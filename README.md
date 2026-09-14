@@ -50,7 +50,7 @@ line as well as the location for the module.
 
 ## Testing
 
-This module includes automated tests that run via GitHub Actions against Drupal 10.5.x-11.3.x (see `.github/workflows/drupal-tests-and-standards.yml` for the exact PHP/MariaDB matrix).
+This module includes automated tests that run via GitHub Actions against Drupal 10.5.x-11.3.x (see `.github/drupal-ci.yml` for the exact PHP/MariaDB matrix).
 
 ### Test Plan
 
