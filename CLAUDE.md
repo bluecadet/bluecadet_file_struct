@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 A Drupal contrib-style module (`bluecadet_file_struct`) that lets a site admin designate a text field on Media entities as a "target directory" field. Whenever a Media entity with that field set is saved, the module moves the entity's underlying file to that directory -- so file storage location can be driven by editorial/content data instead of Drupal's default flat/date-based file paths.
 
-Requires Drupal 10.5+/11.2+ and PHP 8.2+. This is a library consumed by other Drupal sites via Composer (package type `custom-drupal-module`), so it does not run standalone -- testing and running require a full Drupal installation (see below). Depends on `bluecadet/bluecadet_utilities`.
+Requires Drupal 10.6+/11.3+ and PHP 8.2+. This is a library consumed by other Drupal sites via Composer (package type `custom-drupal-module`), so it does not run standalone -- testing and running require a full Drupal installation (see below). Depends on `bluecadet/bluecadet_utilities`.
 
 **Not fully implemented:** `config/schema/bluecadet_file_struct.schema.yml` declares `public_vocab`/`private_vocab` config keys, and the module depends on Drupal core's Taxonomy module -- both point at an original design where the directory structure would be derived from a taxonomy vocabulary (e.g. term hierarchy -> folder path). No code currently reads either config key. Only the simpler flat-string-field workflow described above is wired up.
 
@@ -44,15 +44,15 @@ vendor/bin/phpstan analyse --configuration modules/bluecadet/bluecadet_file_stru
   modules/bluecadet/bluecadet_file_struct
 ```
 
-Only `tests/src/Unit` exists today (the validator's regex logic). There is no Kernel or Functional coverage yet for the presave hook or settings form -- follow-up work.
+Tests live in `tests/src/Unit` (the validator's regex logic) and `tests/src/Kernel` (the media-presave hook, the bundle field-info alter, and the settings form). There is no Functional coverage.
 
 ## CI
 
-`.github/workflows/drupal-tests-and-standards.yml` calls the reusable `.github/workflows/drupal-test-runner.yml`, which clones Drupal core fresh, symlinks this module in via a path repository, then runs PHPCS, PHPStan, and PHPUnit. It runs on push/PR to `1.x`, monthly on a schedule, and via manual `workflow_dispatch` (which lets you target a specific Drupal core branch, PHP version, MariaDB version, and PHPUnit path). PR builds test a reduced matrix (10.6.x/11.3.x); push/schedule test the full matrix (10.5.x-11.3.x). This architecture, and the module's D11 support itself, were ported over from `bluecadet_ajax_content`.
+`.github/workflows/drupal-tests-and-standards.yml` calls the reusable `.github/workflows/drupal-test-runner.yml`, which clones Drupal core fresh, symlinks this module in via a path repository, then runs PHPCS, PHPStan, and PHPUnit. It runs on push/PR to `1.x`, monthly on a schedule, and via manual `workflow_dispatch` (which lets you target a specific Drupal core branch, PHP version, MariaDB version, and PHPUnit path). The matrix lives in `.github/drupal-ci.yml`: PR builds test the latest release of each supported major (10.6.x, 11.4.x); push/schedule/dispatch test every supported minor plus the next in development (10.6.x, 11.3.x, 11.4.x, 11.5.x, 12.0.x). The 12.0.x cell is expected to be red until Drupal 12 support lands. When Drupal ships or retires a minor, update `drupal-ci.yml` and the Testing line in `README.md`. This architecture, and the module's D11 support itself, were ported over from `bluecadet_ajax_content`.
 
 ## Versioning
 
-Both `bluecadet_file_struct.info.yml` and `package.json` carry the module version, and they've drifted (`1.0.0-rc1` vs `1.0.0` as of this writing). Use `npx set-version -v <version> -c` (from `@bluecadet/drops`) to bump and tag both at once rather than editing them by hand.
+Both `bluecadet_file_struct.info.yml` and `package.json` (and `package-lock.json`) carry the module version. Don't edit them by hand: from a clean tree, run `./node_modules/.bin/set-version -v <version> -c` (from `@bluecadet/drops`). `-c` runs `git add .`, commits `chore(release): bump version to X` and creates a lightweight tag. Call the binary directly; `npx set-version -v ...` can misparse `-v`. Before tagging, update the changelog in `README.md` and the `extra.bluecadet-package-manager` `recommended` entry in `composer.json` (the package manager reads it from the highest tag). The update check itself runs from `bluecadet_utilities`' `hook_update_status_alter()`, which lists this module.
 
 ## Keeping this file current
 
