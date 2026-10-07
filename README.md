@@ -4,14 +4,14 @@ A Drupal module that lets you designate a text field on Media entities as a targ
 
 ## Requirements
 
-- Drupal 10.5+ or Drupal 11.2+
+- Drupal 10.6+ or Drupal 11.3+
 - PHP 8.2 or higher
 
 ## Versions
 
 ### 1.x Branch
 
-- **1.1.x**: Drupal 10.5+/11.2+ support (PHP 8.2+)
+- **1.1.x**: Drupal 10.6+/11.3+ support (PHP 8.2+)
 - **1.0.x**: Drupal 9/10 support (original release)
 
 ## Includes
@@ -71,7 +71,7 @@ Only `tests/src/Unit/DirConstraintValidatorTest.php` exists today, covering the 
 
 ### 1.1.x
 
-- Added Drupal 11 compatibility (`drupal/core: ^10.5 || ^11.2`, PHP 8.2+)
+- Added Drupal 11 compatibility (`drupal/core: ^10.6 || ^11.3`, PHP 8.2+)
 - Adopted the reusable GitHub Actions workflow architecture (PHPStan, dynamic module name, least-privilege permissions)
 - Upgraded build tooling to bldr 2.0.0-alpha and Node 20
 - Fixed D11-incompatible entity typing and the removed `file_move()` function
@@ -79,7 +79,7 @@ Only `tests/src/Unit/DirConstraintValidatorTest.php` exists today, covering the 
 - Moved CI to a shared, config-driven orchestrator in `bluecadet/web-gh-actions`
 - Fixed several postcss plugins that were silently relying on an old transitive dependency rather than being declared directly; updated `@bluecadet/drops` to `^1.2.1`
 - Added Kernel test coverage for the media-presave, field-alter, and settings-form logic (27% to ~90%)
-- Bumped `bluecadet/bluecadet_utilities` to `^5.0`, removed the unused `melbahja/semver` dependency, and added `bluecadet/bc_drupal_package_manager` support (`hook_update_status_alter()`) so the module surfaces its own update recommendations
+- Bumped `bluecadet/bluecadet_utilities` to `^5.0`, removed the unused `melbahja/semver` dependency, and added the `extra.bluecadet-package-manager` release metadata so Bluecadet's update checks can surface this module's recommended versions (the check itself runs from `bluecadet_utilities`' `hook_update_status_alter()`, which already lists this module)
 
 ### 1.0.x
 
